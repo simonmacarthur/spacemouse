@@ -3,4 +3,4 @@
 
 void readAllFromKeys(int* keyVals);
 void setupKeys();
-void evalKeys(int* keyVals, uint8_t* keyOut);
+bool evalKeys(int* keyVals, uint8_t* keyOut);

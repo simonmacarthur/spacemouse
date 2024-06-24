@@ -73,6 +73,26 @@ void debugOutput4(int16_t* velocity, uint8_t* keyOut) {
   }
 }
 
+void debugOutput6(int16_t* velocity, uint8_t* keyOut) {
+  // Report translation and rotation values if enabled. Approx -350 to +350 depending on the parameter.
+  if (isDebugOutputDue()) {
+    for (int i = 0; i < 6; i++) {
+      Serial.print("Movement: ");
+      Serial.print(velNames[i]);
+      Serial.print(velocity[i]);
+      Serial.print(", ");
+    }
+    for (int i = 0; i < NUMKEYS; i++) {
+      Serial.print("K");
+      Serial.print(i);
+      Serial.print(":");
+      Serial.print(keyOut[i]);
+      Serial.print(", ");
+    }
+    Serial.println("");
+  }
+}
+
 void debugOutput5(int* centered, int16_t* velocity) {
   // Report debug 4 and 5 info side by side for direct reference if enabled. Very useful if you need to alter which inputs are used in the arithmetic above.
   if (isDebugOutputDue()) {

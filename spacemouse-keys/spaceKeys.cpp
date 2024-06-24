@@ -22,15 +22,20 @@ void setupKeys() {
 
 // Function to read and store the digital states for each of the keys
 void readAllFromKeys(int* keyVals) {
+
   for (int i = 0; i < NUMKEYS; i++) {
     keyVals[i] = digitalRead(keyList[i]);
   }
+
 }
 
 // Evaluate and debounce all keys from the raw keyVals into the debounced keyOut.
 // The keyOut is only 1 for one iteration of the loop.
 // If you want to know, if the key is pressed all the time (for the kill-key feature), use the not debounced raw keyVal!
-void evalKeys(int* keyVals, uint8_t* keyOut) {
+// returns true if any key was pressed
+bool evalKeys(int* keyVals, uint8_t* keyOut) {
+  bool anyKeyPressed = 0;
+
   //Button Evaluation
   for (int i = 0; i < NUMKEYS; i++) {
     // The keys are configured with pull_up, see setupKeys() and are pulled to ground, when pressed.
@@ -38,7 +43,8 @@ void evalKeys(int* keyVals, uint8_t* keyOut) {
     if (!keyVals[i]) {  // the key is pressed
       // Making sure button cannot trigger multiple times which would result in overloading HID.
       if (key_waspressed[i] == 0) {  // if the button has not been pressed lately:
-        keyOut[i] = 1;               // this is the variable telling the outside world only one iteration, that the key was pressed
+        keyOut[i] = 1; 
+        anyKeyPressed = 1;              // this is the variable telling the outside world only one iteration, that the key was pressed
         key_waspressed[i] = 1;       // remember, that we already told the outside world about this key
         timestamp[i] = millis();     // remember the time, the button was pressed
         Serial.print("Key: ");       // this is always sent over the serial console, and not only in debug
@@ -55,5 +61,6 @@ void evalKeys(int* keyVals, uint8_t* keyOut) {
       }
     }
   }
+  return anyKeyPressed;
 }
 #endif

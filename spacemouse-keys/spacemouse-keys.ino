@@ -222,8 +222,9 @@ void loop() {
   velocity[ROTZ] = velocity[ROTZ] * -1;
 #endif
 
+bool anyKeyPressed =0;
 #if NUMKEYS > 0
-  evalKeys(keyVals, keyOut);
+  anyKeyPressed= evalKeys(keyVals, keyOut);
 #endif
 
   if (debug == 4) {
@@ -250,21 +251,30 @@ void loop() {
   }
 #endif
 
-  // report velocity and keys after possible kill-key feature
-  if (debug == 6) {
-    debugOutput4(velocity, keyOut);
+
+
+
+  // Added check to see if any input was actually received, to avoid spamming the 3DConnexion
+  if(velocity[ROTX]!=0 || velocity[ROTY]!=0 || velocity[ROTZ]!=0  || velocity[TRANSX] !=0 || velocity[TRANSY] !=0 || velocity[TRANSZ] !=0 || anyKeyPressed !=0)
+  {
+
+      
+    if (debug == 6) {
+      debugOutput6(velocity, keyOut);
+    }
+
+    // Send data to the 3DConnexion software.
+    // The correct order for TeachingTech was determined after trial and error
+    // report velocity and keys after possible kill-key feature
+    #if SWITCHYZ > 0
+      // Original from TT, but 3DConnextion tutorial will not work:
+      send_command(velocity[ROTX], velocity[ROTZ], velocity[ROTY], velocity[TRANSX], velocity[TRANSZ], velocity[TRANSY], keyOut, debug);
+    #else
+      // Daniel_1284580 noticed the 3dconnexion tutorial was not working the right way so they got changed
+      
+      send_command(velocity[ROTX], velocity[ROTY], velocity[ROTZ], velocity[TRANSX], velocity[TRANSY], velocity[TRANSZ], keyOut, debug);
+    #endif
   }
-
-  // Send data to the 3DConnexion software.
-  // The correct order for TeachingTech was determined after trial and error
-#if SWITCHYZ > 0
-  // Original from TT, but 3DConnextion tutorial will not work:
-  send_command(velocity[ROTX], velocity[ROTZ], velocity[ROTY], velocity[TRANSX], velocity[TRANSZ], velocity[TRANSY], keyOut, debug);
-#else
-  // Daniel_1284580 noticed the 3dconnexion tutorial was not working the right way so they got changed
-  send_command(velocity[ROTX], velocity[ROTY], velocity[ROTZ], velocity[TRANSX], velocity[TRANSY], velocity[TRANSZ], keyOut, debug);
-#endif
-
   
   if (debug == 7) {
     // update and report the at what frequency the loop is running
